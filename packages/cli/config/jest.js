@@ -20,21 +20,22 @@ const crypto = require('crypto');
 const glob = require('util').promisify(require('glob'));
 const { version } = require('../package.json');
 
-// const transformIgnorePattern = [
-//   '@material-ui',
-//   '@rjsf',
-//   'ajv',
-//   'core-js',
-//   'jest-.*',
-//   'jsdom',
-//   'knex',
-//   'react',
-//   'react-dom',
-//   'highlight\\.js',
-//   'prismjs',
-//   'react-use',
-//   'typescript',
-// ].join('|');
+const transformIgnorePattern = [
+  '@material-ui',
+  '@rjsf',
+  'ajv',
+  'core-js',
+  'jest-.*',
+  'jsdom',
+  'knex',
+  'react',
+  'react-dom',
+  'highlight\\.js',
+  'prismjs',
+  'json-schema',
+  'react-use',
+  'typescript',
+].join('|');
 
 // Provides additional config that's based on the role of the target package
 function getRoleConfig(role) {
