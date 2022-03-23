@@ -20,21 +20,21 @@ const crypto = require('crypto');
 const glob = require('util').promisify(require('glob'));
 const { version } = require('../package.json');
 
-const transformIgnorePattern = [
-  '@material-ui',
-  '@rjsf',
-  'ajv',
-  'core-js',
-  'jest-.*',
-  'jsdom',
-  'knex',
-  'react',
-  'react-dom',
-  'highlight\\.js',
-  'prismjs',
-  'react-use',
-  'typescript',
-].join('|');
+// const transformIgnorePattern = [
+//   '@material-ui',
+//   '@rjsf',
+//   'ajv',
+//   'core-js',
+//   'jest-.*',
+//   'jsdom',
+//   'knex',
+//   'react',
+//   'react-dom',
+//   'highlight\\.js',
+//   'prismjs',
+//   'react-use',
+//   'typescript',
+// ].join('|');
 
 // Provides additional config that's based on the role of the target package
 function getRoleConfig(role) {
@@ -133,9 +133,7 @@ async function getProjectConfig(targetPath, displayName) {
 
     // A bit more opinionated
     testMatch: ['**/*.test.{js,jsx,ts,tsx,mjs,cjs}'],
-
     transformIgnorePatterns: [`/node_modules/(?:${transformIgnorePattern})/`],
-
     ...getRoleConfig(closestPkgJson?.backstage?.role),
   };
 
