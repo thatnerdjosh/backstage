@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { CompoundEntityRef } from '@backstage/catalog-model';
+import { CompoundEntityRef, DEFAULT_NAMESPACE } from '@backstage/catalog-model';
 import { SearchContextProvider, useSearch } from '@backstage/plugin-search';
+import { useEntityMetadata } from '@backstage/plugin-techdocs-addons';
 import {
   makeStyles,
   CircularProgress,
@@ -45,6 +46,11 @@ export type TechDocsSearchProps = {
   entityId: CompoundEntityRef;
   debounceTime?: number;
 };
+
+/**
+ * @public
+ */
+export type TechDocsSearchAddonProps = Omit<TechDocsSearchProps, 'entityId'>;
 
 type TechDocsDoc = {
   namespace: string;
@@ -200,4 +206,26 @@ export const TechDocsSearch = (props: TechDocsSearchProps) => {
       <TechDocsSearchBar {...props} />
     </SearchContextProvider>
   );
+};
+
+/**
+ * Wrapper around the component used to render the search bar on TechDocs pages
+ * that is used as a TechDocs addon.
+ *
+ * @returns
+ */
+export const TechDocsSearchAddon = (props: TechDocsSearchAddonProps) => {
+  const { value: entityMetadata } = useEntityMetadata();
+
+  if (!entityMetadata) {
+    return null;
+  }
+
+  const entityId = {
+    namespace: entityMetadata!.metadata.namespace || DEFAULT_NAMESPACE,
+    kind: entityMetadata!.kind,
+    name: entityMetadata!.metadata.name,
+  };
+
+  return <TechDocsSearch {...{ ...props, ...{ entityId } }} />;
 };

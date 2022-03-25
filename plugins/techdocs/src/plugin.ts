@@ -16,11 +16,16 @@
 
 import { techdocsApiRef, techdocsStorageApiRef } from './api';
 import { TechDocsClient, TechDocsStorageClient } from './client';
+import { TechDocsStateIndicator as IndicatorComponent } from './reader/components/TechDocsStateIndicator';
 import {
   rootDocsRouteRef,
   rootRouteRef,
   rootCatalogDocsRouteRef,
 } from './routes';
+import {
+  TechDocsSearchAddon,
+  TechDocsSearchAddonProps,
+} from './search/components/TechDocsSearch';
 import {
   configApiRef,
   createApiFactory,
@@ -30,6 +35,10 @@ import {
   fetchApiRef,
   identityApiRef,
 } from '@backstage/core-plugin-api';
+import {
+  createTechDocsAddon,
+  TechDocsAddonLocations,
+} from '@backstage/plugin-techdocs-addons';
 
 /**
  * The Backstage plugin that renders technical documentation for your components
@@ -148,5 +157,33 @@ export const TechDocsReaderPage = techdocsPlugin.provide(
         m => m.TechDocsReaderPage,
       ),
     mountPoint: rootDocsRouteRef,
+  }),
+);
+
+/**
+ * A TechDocs addon that replicates the core TechDocs in-context search
+ * experience for a given TechDocs site.
+ *
+ * @public
+ */
+export const TechDocsSearch = techdocsPlugin.provide(
+  createTechDocsAddon<TechDocsSearchAddonProps>({
+    name: 'TechDocsSearch',
+    location: TechDocsAddonLocations.SUBHEADER,
+    component: TechDocsSearchAddon,
+  }),
+);
+
+/**
+ * A TechDocs addon that replicates the core TechDocs build state indicator and
+ * log realtime log message display.
+ *
+ * @public
+ */
+export const TechDocsStateIndicator = techdocsPlugin.provide(
+  createTechDocsAddon<{}>({
+    name: 'TechDocsStateIndicator',
+    location: TechDocsAddonLocations.SUBHEADER,
+    component: IndicatorComponent,
   }),
 );

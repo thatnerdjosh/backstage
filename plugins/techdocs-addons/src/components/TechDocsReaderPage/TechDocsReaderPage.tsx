@@ -63,8 +63,6 @@ export const TechDocsReaderPage = (props: TechDocsReaderPageProps) => {
             <Page themeId="documentation">
               {!hideHeader && <TechDocsReaderPageHeader />}
               <TechDocsReaderPageSubheader />
-              {/* todo(backstage/techdocs-core): handle state indicator */}
-              {/* <TechDocReaderPageIndicator /> */}
               <TechDocsReaderPageContent dom={dom} />
             </Page>
           </TechDocsReaderPageProvider>

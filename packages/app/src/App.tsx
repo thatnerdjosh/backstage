@@ -68,6 +68,8 @@ import {
   TechDocsIndexPage,
   TechDocsReaderPage,
   techdocsPlugin,
+  TechDocsStateIndicator,
+  TechDocsSearch,
 } from '@backstage/plugin-techdocs';
 import { TechDocsAddons } from '@backstage/plugin-techdocs-addons';
 import { UserSettingsPage } from '@backstage/plugin-user-settings';
@@ -93,7 +95,6 @@ import {
   ExampleHeader,
   ExamplePrimarySidebar,
   ExampleSecondarySidebar,
-  ExampleSubHeader,
 } from './components/techdocs/ExampleAddons';
 
 const app = createApp({
@@ -182,8 +183,9 @@ const routes = (
       element={<TechDocsReaderPage />}
     >
       <TechDocsAddons>
+        <TechDocsStateIndicator />
+        <TechDocsSearch />
         <ExampleHeader />
-        <ExampleSubHeader />
         <ExamplePrimarySidebar />
         <ExampleSecondarySidebar />
         <ExampleContent />

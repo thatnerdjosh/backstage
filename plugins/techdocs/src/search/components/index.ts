@@ -15,4 +15,7 @@
  */
 
 export * from './TechDocsSearchResultListItem';
-export * from './TechDocsSearch';
+export type {
+  TechDocsSearchAddonProps,
+  TechDocsSearchProps,
+} from './TechDocsSearch';

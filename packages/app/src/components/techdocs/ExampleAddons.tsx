@@ -43,20 +43,6 @@ export const ExampleHeader = techdocsPlugin.provide(
   }),
 );
 
-export const ExampleSubHeader = techdocsPlugin.provide(
-  createTechDocsAddon({
-    name: 'ExampleSubHeader',
-    location: TechDocsAddonLocations.SUBHEADER,
-    component: () => {
-      return (
-        <Card>
-          <CardContent>Subheader.</CardContent>
-        </Card>
-      );
-    },
-  }),
-);
-
 export const ExamplePrimarySidebar = techdocsPlugin.provide(
   createTechDocsAddon({
     name: 'ExamplePrimarySidebar',

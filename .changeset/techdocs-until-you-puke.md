@@ -7,10 +7,15 @@ TechDocs now supports a new method of customization: addons!
 To customize the standalone TechDocs reader page experience, update your `/packages/app/src/App.tsx` in the following way:
 
 ```diff
-import { TechDocsIndexPage, TechDocsReaderPage } from '@backstage/plugin-techdocs';
-+ import { TechDocsAddons } from '@backstage/plugin-techdocs-addons';
-+ import { SomeAddon } from '@backstage/plugin-some-plugin';
+- import { TechDocsIndexPage, TechDocsReaderPage } from '@backstage/plugin-techdocs';
 - import { techDocsPage } from './components/techdocs/TechDocsPage';
++ import {
++   TechDocsIndexPage,
++   TechDocsReaderPage,
++   TechDocsSearch,
++   TechDocsStateIndicator,
++ } from '@backstage/plugin-techdocs';
++ import { TechDocsAddons } from '@backstage/plugin-techdocs-addons';
 
 // ...
 
@@ -21,7 +26,8 @@ import { TechDocsIndexPage, TechDocsReaderPage } from '@backstage/plugin-techdoc
     >
 -      {techDocsPage}
 +      <TechDocsAddons>
-+        <SomeAddon />
++        <TechDocsStateIndicator />
++        <TechDocsSearch />
 +      </TechDocsAddons>
     </Route>
 
@@ -31,9 +37,13 @@ import { TechDocsIndexPage, TechDocsReaderPage } from '@backstage/plugin-techdoc
 To customize the TechDocs reader experience on the Catalog entity page, update your `packages/app/src/components/catalog/EntityPage.tsx` in the following way:
 
 ```diff
-import { EntityTechdocsContent } from '@backstage/plugin-techdocs';
+- import { EntityTechdocsContent } from '@backstage/plugin-techdocs';
++ import {
++   EntityTechdocsContent,
++   TechDocsSearch,
++   TechDocsStateIndicator,
++ } from '@backstage/plugin-techdocs';
 + import { TechDocsAddons } from '@backstage/plugin-techdocs-addons';
-+ import { SomeAddon } from '@backstage/plugin-some-plugin';
 
 // ...
 
@@ -46,7 +56,8 @@ import { EntityTechdocsContent } from '@backstage/plugin-techdocs';
 -      <EntityTechDocsContent />
 +      <EntityTechdocsContent>
 +        <TechDocsAddons>
-+          <SomeAddon />
++          <TechDocsStateIndicator />
++          <TechDocsSearch />
 +        </TechDocsAddons>
 +      </EntityTechdocsContent>
     </EntityLayout.Route>

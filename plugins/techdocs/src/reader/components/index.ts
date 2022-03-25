@@ -22,7 +22,6 @@ export type {
 } from './TechDocsReaderPage';
 export { TechDocsPage } from './TechDocsReaderPage';
 export * from './TechDocsReaderPageHeader';
-export * from './TechDocsStateIndicator';
 
 /**
  * Note: this component is currently being exported so that we can rapidly

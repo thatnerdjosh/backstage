@@ -58,7 +58,7 @@ import {
   copyToClipboard,
 } from '../transformers';
 
-import { TechDocsSearch } from '../../search';
+import { TechDocsSearch } from '../../search/components/TechDocsSearch';
 import { TechDocsStateIndicator } from './TechDocsStateIndicator';
 import { useReaderState } from './useReaderState';
 

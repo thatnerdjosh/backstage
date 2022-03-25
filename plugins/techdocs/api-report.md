@@ -7,6 +7,7 @@
 
 import { ApiRef } from '@backstage/core-plugin-api';
 import { BackstagePlugin } from '@backstage/core-plugin-api';
+import { ComponentType } from 'react';
 import { CompoundEntityRef } from '@backstage/catalog-model';
 import { Config } from '@backstage/config';
 import { CSSProperties } from '@material-ui/styles';
@@ -327,7 +328,10 @@ export type TechDocsReaderPageRenderFunction = ({
 }) => JSX.Element;
 
 // @public
-export const TechDocsSearch: (props: TechDocsSearchProps) => JSX.Element;
+export const TechDocsSearch: ComponentType<TechDocsSearchAddonProps>;
+
+// @public (undocumented)
+export type TechDocsSearchAddonProps = Omit<TechDocsSearchProps, 'entityId'>;
 
 // @public
 export type TechDocsSearchProps = {
@@ -348,6 +352,9 @@ export type TechDocsSearchResultListItemProps = {
   asLink?: boolean;
   title?: string;
 };
+
+// @public
+export const TechDocsStateIndicator: ComponentType<{}>;
 
 // @public
 export interface TechDocsStorageApi {

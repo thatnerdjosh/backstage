@@ -103,7 +103,11 @@ import {
   isRollbarAvailable,
 } from '@backstage/plugin-rollbar';
 import { EntitySentryContent } from '@backstage/plugin-sentry';
-import { EntityTechdocsContent } from '@backstage/plugin-techdocs';
+import {
+  EntityTechdocsContent,
+  TechDocsSearch,
+  TechDocsStateIndicator,
+} from '@backstage/plugin-techdocs';
 import { EntityTodoContent } from '@backstage/plugin-todo';
 import { Button, Grid } from '@material-ui/core';
 import BadgeIcon from '@material-ui/icons/CallToAction';
@@ -124,7 +128,6 @@ import {
   ExampleHeader,
   ExamplePrimarySidebar,
   ExampleSecondarySidebar,
-  ExampleSubHeader,
 } from '../techdocs/ExampleAddons';
 
 const customEntityFilterKind = ['Component', 'API', 'System'];
@@ -354,7 +357,8 @@ const serviceEntityPage = (
       <EntityTechdocsContent>
         <TechDocsAddons>
           <ExampleHeader />
-          <ExampleSubHeader />
+          <TechDocsStateIndicator />
+          <TechDocsSearch />
           <ExamplePrimarySidebar />
           <ExampleSecondarySidebar />
           <ExampleContent />
@@ -429,7 +433,8 @@ const websiteEntityPage = (
       <EntityTechdocsContent>
         <TechDocsAddons>
           <ExampleHeader />
-          <ExampleSubHeader />
+          <TechDocsStateIndicator />
+          <TechDocsSearch />
           <ExamplePrimarySidebar />
           <ExampleSecondarySidebar />
           <ExampleContent />
@@ -476,7 +481,8 @@ const defaultEntityPage = (
       <EntityTechdocsContent>
         <TechDocsAddons>
           <ExampleHeader />
-          <ExampleSubHeader />
+          <TechDocsStateIndicator />
+          <TechDocsSearch />
           <ExamplePrimarySidebar />
           <ExampleSecondarySidebar />
           <ExampleContent />
