@@ -22,7 +22,6 @@ export type TechDocsAddonAsyncMetadata<TValue> = AsyncState<TValue | undefined>;
 
 // @public
 export enum TechDocsAddonLocations {
-  COMPONENT = 'component',
   CONTENT = 'content',
   HEADER = 'header',
   PRIMARY_SIDEBAR = 'primary sidebar',

@@ -16,7 +16,6 @@
 
 import { Header } from '@backstage/core-components';
 import { configApiRef, useApi } from '@backstage/core-plugin-api';
-// todo(backstage/techdocs-core): Export these from @backstage/plugin-techdocs
 import { Skeleton } from '@material-ui/lab';
 import React, { useEffect } from 'react';
 import Helmet from 'react-helmet';
