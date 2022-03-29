@@ -12,6 +12,7 @@ import { DiscoveryApi } from '@backstage/core-plugin-api';
 import { IdentityApi } from '@backstage/core-plugin-api';
 import { Permission } from '@backstage/plugin-permission-common';
 import { ReactElement } from 'react';
+import { ReactNode } from 'react';
 import { ResourcePermission } from '@backstage/plugin-permission-common';
 import { Route } from 'react-router';
 
@@ -42,9 +43,11 @@ export type PermissionApi = {
 // @public
 export const permissionApiRef: ApiRef<PermissionApi>;
 
-// @public
+// Warning: (tsdoc-reference-missing-hash) The declaration reference appears to contain a package name or import path, but it is missing the "#" delimiter
+//
+// @public @deprecated
 export const PermissionedRoute: (
-  props: ComponentProps<typeof Route> & {
+  _props: ComponentProps<typeof Route> & {
     errorComponent?: ReactElement | null;
   } & (
       | {
@@ -56,7 +59,27 @@ export const PermissionedRoute: (
           resourceRef: string | undefined;
         }
     ),
-) => JSX.Element;
+) => never;
+
+// @public
+export function RequirePermission(
+  props: RequirePermissionProps,
+): JSX.Element | null;
+
+// @public
+export type RequirePermissionProps = (
+  | {
+      permission: Exclude<Permission, ResourcePermission>;
+      resourceRef?: never;
+    }
+  | {
+      permission: ResourcePermission;
+      resourceRef: string | undefined;
+    }
+) & {
+  errorPage?: ReactNode;
+  children: ReactNode;
+};
 
 // @public
 export function usePermission(
