@@ -15,92 +15,50 @@
  */
 
 import React, {
-  createContext,
+  ReactNode,
+  memo,
   Dispatch,
-  PropsWithChildren,
   SetStateAction,
+  createContext,
   useContext,
   useState,
 } from 'react';
 import useAsync, { AsyncState } from 'react-use/lib/useAsync';
 
-import { Page } from '@backstage/core-components';
 import { useApi } from '@backstage/core-plugin-api';
 import { CompoundEntityRef } from '@backstage/catalog-model';
 
 import { techdocsApiRef } from '../../../api';
 import { TechDocsEntityMetadata, TechDocsMetadata } from '../../../types';
 
-type PropsWithEntityName<T = {}> = T &
-  PropsWithChildren<{ entityName: CompoundEntityRef }>;
-
-const initialContextValue = {
-  loading: true,
-  error: undefined,
-  value: undefined,
+const arePathsEqual = (prevPath?: string, nextPath?: string) => {
+  if (prevPath !== nextPath) {
+    return false;
+  }
+  return true;
 };
 
-const TechDocsMetadataContext =
-  createContext<AsyncState<TechDocsMetadata>>(initialContextValue);
-
-export const TechDocsMetadataProvider = ({
-  entityName,
-  children,
-}: PropsWithEntityName) => {
-  const techdocsApi = useApi(techdocsApiRef);
-
-  const value = useAsync(async () => {
-    return techdocsApi.getTechDocsMetadata(entityName);
-  }, [entityName]);
-
-  return (
-    <TechDocsMetadataContext.Provider value={value}>
-      {children}
-    </TechDocsMetadataContext.Provider>
-  );
-};
-
-/**
- * Hook for use within TechDocs addons to retrieve TechDocs Metadata for the
- * current TechDocs site.
- * @public
- */
-export const useTechDocsMetadata = () => {
-  return useContext(TechDocsMetadataContext);
-};
-
-const TechDocsEntityContext =
-  createContext<AsyncState<TechDocsEntityMetadata>>(initialContextValue);
-
-export const TechDocsEntityProvider = ({
-  entityName,
-  children,
-}: PropsWithEntityName) => {
-  const techdocsApi = useApi(techdocsApiRef);
-
-  const value = useAsync(async () => {
-    return techdocsApi.getEntityMetadata(entityName);
-  }, [entityName]);
-
-  return (
-    <TechDocsEntityContext.Provider value={value}>
-      {children}
-    </TechDocsEntityContext.Provider>
-  );
-};
-
-/**
- * Hook for use within TechDocs addons to retrieve Entity Metadata for the
- * current TechDocs site.
- * @public
- */
-export const useEntityMetadata = () => {
-  return useContext(TechDocsEntityContext);
+const areEntityNamesEqual = (
+  prevEntityName: CompoundEntityRef,
+  nextEntityName: CompoundEntityRef,
+) => {
+  if (prevEntityName.kind !== nextEntityName.kind) {
+    return false;
+  }
+  if (prevEntityName.name !== nextEntityName.name) {
+    return false;
+  }
+  if (prevEntityName.namespace !== nextEntityName.namespace) {
+    return false;
+  }
+  return true;
 };
 
 export type TechDocsReaderPageValue = {
   path: string;
+  metadata: AsyncState<TechDocsMetadata>;
   entityName: CompoundEntityRef;
+  entityMetadata: AsyncState<TechDocsEntityMetadata>;
   shadowRoot?: ShadowRoot;
   setShadowRoot: Dispatch<SetStateAction<ShadowRoot | undefined>>;
   title: string;
@@ -112,10 +70,12 @@ export type TechDocsReaderPageValue = {
 export const defaultTechDocsReaderPageValue: TechDocsReaderPageValue = {
   path: '',
   title: '',
-  setTitle: () => {},
   subtitle: '',
+  setTitle: () => {},
   setSubtitle: () => {},
   setShadowRoot: () => {},
+  metadata: { loading: true },
+  entityMetadata: { loading: true },
   entityName: { kind: '', name: '', namespace: '' },
 };
 
@@ -127,48 +87,79 @@ export const useTechDocsReaderPage = () => {
   return useContext(TechDocsReaderPageContext);
 };
 
-type TechDocsReaderPageProviderProps = PropsWithEntityName<{
+type TechDocsReaderPageProviderRenderFunction = (
+  value: TechDocsReaderPageValue,
+) => JSX.Element;
+
+type TechDocsReaderPageProviderProps = {
   path?: string;
-}>;
+  entityName: CompoundEntityRef;
+  children: TechDocsReaderPageProviderRenderFunction | ReactNode;
+};
 
-export const TechDocsReaderPageProvider = ({
-  path = '',
-  entityName,
-  children,
-}: TechDocsReaderPageProviderProps) => {
-  const { value: entityMetadataValue } = useEntityMetadata();
-  const { value: techdocsMetadataValue } = useTechDocsMetadata();
+export const TechDocsReaderPageProvider = memo(
+  ({ path = '', entityName, children }: TechDocsReaderPageProviderProps) => {
+    const techdocsApi = useApi(techdocsApiRef);
 
-  const [title, setTitle] = useState(defaultTechDocsReaderPageValue.title);
-  const [subtitle, setSubtitle] = useState(
-    defaultTechDocsReaderPageValue.subtitle,
-  );
-  const [shadowRoot, setShadowRoot] = useState<ShadowRoot | undefined>(
-    defaultTechDocsReaderPageValue.shadowRoot,
-  );
+    const metadata = useAsync(async () => {
+      return techdocsApi.getTechDocsMetadata(entityName);
+    }, [entityName]);
 
-  const value = {
-    path,
-    entityName,
-    shadowRoot,
-    setShadowRoot,
-    title,
-    setTitle,
-    subtitle,
-    setSubtitle,
-  };
+    const entityMetadata = useAsync(async () => {
+      return techdocsApi.getEntityMetadata(entityName);
+    }, [entityName]);
 
-  return (
-    <TechDocsReaderPageContext.Provider value={value}>
-      <Page themeId="documentation">
-        {children instanceof Function
-          ? children({
-              entityRef: entityName,
-              entityMetadataValue,
-              techdocsMetadataValue,
-            })
-          : children}
-      </Page>
-    </TechDocsReaderPageContext.Provider>
-  );
+    const [title, setTitle] = useState(defaultTechDocsReaderPageValue.title);
+    const [subtitle, setSubtitle] = useState(
+      defaultTechDocsReaderPageValue.subtitle,
+    );
+    const [shadowRoot, setShadowRoot] = useState<ShadowRoot | undefined>(
+      defaultTechDocsReaderPageValue.shadowRoot,
+    );
+
+    const value = {
+      path,
+      metadata,
+      entityName,
+      entityMetadata,
+      shadowRoot,
+      setShadowRoot,
+      title,
+      setTitle,
+      subtitle,
+      setSubtitle,
+    };
+
+    return (
+      <TechDocsReaderPageContext.Provider value={value}>
+        {children instanceof Function ? children(value) : children}
+      </TechDocsReaderPageContext.Provider>
+    );
+  },
+  (prevProps, nextProps) => {
+    return (
+      arePathsEqual(prevProps.path, nextProps.path) &&
+      areEntityNamesEqual(prevProps.entityName, nextProps.entityName)
+    );
+  },
+);
+
+/**
+ * Hook for use within TechDocs addons to retrieve Entity Metadata for the
+ * current TechDocs site.
+ * @public
+ */
+export const useEntityMetadata = () => {
+  const { entityMetadata } = useTechDocsReaderPage();
+  return entityMetadata;
+};
+
+/**
+ * Hook for use within TechDocs addons to retrieve TechDocs Metadata for the
+ * current TechDocs site.
+ * @public
+ */
+export const useTechDocsMetadata = () => {
+  const { metadata } = useTechDocsReaderPage();
+  return metadata;
 };

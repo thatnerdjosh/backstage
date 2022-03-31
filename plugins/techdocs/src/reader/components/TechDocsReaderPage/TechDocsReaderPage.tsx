@@ -14,34 +14,33 @@
  * limitations under the License.
  */
 
-import React, { ReactNode, useMemo } from 'react';
+import React, { ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { Page } from '@backstage/core-components';
 import { CompoundEntityRef } from '@backstage/catalog-model';
+
+import { TechDocsReaderPageRenderFunction } from '../../../types';
 
 import { TechDocsReaderPageContent } from '../TechDocsReaderPageContent';
 import { TechDocsReaderPageHeader } from '../TechDocsReaderPageHeader';
 import { TechDocsReaderPageSubheader } from '../TechDocsReaderPageSubheader';
 
-import { TechDocsReaderPageRenderFunction } from '../../../types';
-
-import {
-  TechDocsEntityProvider,
-  TechDocsMetadataProvider,
-  TechDocsReaderPageProvider,
-} from './context';
+import { TechDocsReaderPageProvider } from './context';
 
 export type TechDocsReaderLayoutProps = {
   hideHeader?: boolean;
+  withSearch?: boolean;
 };
 
 export const TechDocsReaderLayout = ({
   hideHeader = false,
+  withSearch,
 }: TechDocsReaderLayoutProps) => (
   <>
     {!hideHeader && <TechDocsReaderPageHeader />}
     <TechDocsReaderPageSubheader />
-    <TechDocsReaderPageContent />
+    <TechDocsReaderPageContent withSearch={withSearch} />
   </>
 );
 
@@ -65,31 +64,27 @@ export const TechDocsReaderPage = ({
 }: TechDocsReaderPageProps) => {
   const params = useParams();
 
-  const path = useMemo(() => {
-    if (defaultPath) {
-      return defaultPath;
-    }
-    return params['*'];
-  }, [params, defaultPath]);
+  const path = defaultPath || params['*'];
 
-  const entityName = useMemo(() => {
-    if (defaultEntityName) {
-      return defaultEntityName;
-    }
-    return {
-      kind: params.kind,
-      name: params.name,
-      namespace: params.namespace,
-    };
-  }, [params, defaultEntityName]);
+  const entityName = defaultEntityName || {
+    kind: params.kind,
+    name: params.name,
+    namespace: params.namespace,
+  };
 
   return (
-    <TechDocsMetadataProvider entityName={entityName}>
-      <TechDocsEntityProvider entityName={entityName}>
-        <TechDocsReaderPageProvider path={path} entityName={entityName}>
-          {children}
-        </TechDocsReaderPageProvider>
-      </TechDocsEntityProvider>
-    </TechDocsMetadataProvider>
+    <TechDocsReaderPageProvider path={path} entityName={entityName}>
+      {({ metadata, entityMetadata }) => (
+        <Page themeId="documentation">
+          {children instanceof Function
+            ? children({
+                entityRef: entityName,
+                techdocsMetadataValue: metadata.value,
+                entityMetadataValue: entityMetadata.value,
+              })
+            : children}
+        </Page>
+      )}
+    </TechDocsReaderPageProvider>
   );
 };
